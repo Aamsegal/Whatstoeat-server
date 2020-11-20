@@ -16,7 +16,7 @@ app.use(helmet())
 app.use(cors())
 
 app.get('/', (req, res) => {
-    res.send('Testing new repo location!')
+    res.send('The server works!')
 })
 
 app.use(function errorHandler(error, req, res, next) {
