@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS whats_to_eat_user_table;
