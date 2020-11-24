@@ -1,9 +1,12 @@
+const { expect } = require('chai');
+const supertest = require('supertest');
+
 const app = require('../src/app');
 
-describe('App', () => {
-    it('GET / responds within 200 containing "Hello, World!"', () => {
+describe('Server running', () => {
+    it('Checks the servers base /get endpoint to make sure the server runs', () => {
         return supertest(app)
             .get('/')
-            .expect(200, 'Hello, World!')
+            .expect(200, 'The server works!')
     })
 })
