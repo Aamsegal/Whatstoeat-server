@@ -19,6 +19,7 @@ const serializeUser = userInfo => ({
 userRouter
     .route('/')
 
+    //  create a new user. After creating a user it also creates a login token
     .post(jsonParser, (req, res, next) => {
         const { account_name, username, user_password, user_email } = req.body;
         let id = req.body.id;
@@ -41,10 +42,22 @@ userRouter
         )
 
         .then(user => {
+            let uniqueLoginKey = uuidv4();
+            let user_Id = user.id;
+
+            const loginTableInfo = {id: uniqueLoginKey, login_table_user_id: user_Id}
+
+            WTE_UserServices.insertLoginKey(
+                req.app.get('db'),
+                loginTableInfo
+            )
+
+            .catch(next)
+            
             res
                 .status(201)
                 .location(path.posix.join(req.originalUrl, `/${user.id}`))
-                .json(serializeUser(user))
+                .json('')
         })
 
         .catch(next)
@@ -53,6 +66,8 @@ userRouter
 userRouter
     .route('/:username/:user_password')
 
+    //  checks if there is an account with the username and password. If there is
+    //return the login token for that
     .get((req, res, next) => {
 
         WTE_UserServices.getByUserAndPass(
@@ -62,9 +77,28 @@ userRouter
         )
    
         .then(user => {
+            console.log(user[0].id)
+
+            let user_id = user[0].id;
+
+            const loginTableInfo = user_id
+
+            WTE_UserServices.getLoginTokenByUserId(
+                req.app.get('db'),
+                loginTableInfo
+            )
+
+            .then(loginKey => {
+                console.log(loginKey)
+                res
+                    .status(200)
+                    .json(loginKey)
+            })
+            /*
             res
                 .status(200)
                 .json(user)
+            */
         })
 
         .catch(next)

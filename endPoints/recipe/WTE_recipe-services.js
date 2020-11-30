@@ -11,8 +11,20 @@ const WTE_RecipeServices = {
     },
 
     //  Grabs the recipe by user id
-    getRecipeByUserId(knex, user_id) {
-        return knex.select('*').from('whats_to_eat_recipe_table').where('user_id', user_id)
+    //will make a requets to the WTE_login_table with the generated key and if
+    //they match it will return the user_id that is then used to grab the recipes
+    getRecipeByUserId(knex, userLoginToken) {
+        return knex
+            .select('*')
+            .from('whats_to_eat_recipe_table')
+            .where(
+                "user_id",
+                knex
+                    .select('login_table_user_id')
+                    .from('whats_to_eat_login_table')
+                    .where("id", userLoginToken)
+            )
+                
     },
 
     //  deletes a recipe
@@ -20,7 +32,15 @@ const WTE_RecipeServices = {
         return knex('whats_to_eat_recipe_table')
             .where({id})
             .delete()
-    }
+    },
+
+    //  Grabs the user id from the login token for creating recipeInfo
+    getUserIdByLoginToken(knex, loginToken) {
+        return knex
+            .from('whats_to_eat_login_table')
+            .select('login_table_user_id')
+            .where('id', loginToken)
+    },
 
 }
 

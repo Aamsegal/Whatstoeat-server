@@ -77,21 +77,20 @@ describe('Full process of creating account, adding recipes and their extra info,
     }
 
     context('1.0 Testing /api/userEndpoint .Post and .Get', () => { 
-        //  question for walter, FOR ID'S SHOULD IT BE IDSTRING OR DESCRIPTOR+IDSTRING
-        //examples for user
-        //      id = skudlsaukdguasdgf2891ey2813t9218736
-        //or    id = userId+skudlsaukdguasdgf2891ey2813t9218736
+
         it('1.1 (POST) /api/userEndpoint responds with 201 and the user was created', () => {
             return supertest(app)
                 .post('/api/userEndpoint')
                 .send(testUser)
-                .expect(201, {
+                .expect(201
+                    /*
+                    , {
                     id: generatedId,
                     account_name: testUser.account_name, 
                     username: testUser.username, 
                     user_password: testUser.user_password, 
                     user_email: testUser.user_email
-                })
+                }*/)
         })
 
         it('1.1.1 Adding another account for testing purpose later in the suite', () => {
@@ -105,7 +104,6 @@ describe('Full process of creating account, adding recipes and their extra info,
             return supertest(app)
                 .get(`/api/userEndpoint/${testUser.username}/${testUser.user_password}`)
                 .expect(200)
-
         })
 
     })
@@ -126,9 +124,8 @@ describe('Full process of creating account, adding recipes and their extra info,
                     cooking_instruction_link: "200YearChocolateCake",
                     user_id: generatedId
                 })
-
-                //QUESTION! Why does my database return strings when I store int in them
-                //  serving_size and total_calories are int but return sting
+                //  Even though serving_size and total_calories are stored as INT in the database
+                //they are returned as strings because json doesn't know data types.
         })
 
         it('2.1.1 Adding extra recipe for later testing purposes', () => {

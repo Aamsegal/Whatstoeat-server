@@ -21,17 +21,22 @@ const serializeRecipe = recipeInfo => ({
 
 recipeRouter
     .route('/')
-
+    
+    //  posts a recipe. First grabs the user id by using the login token
+    //then uses the user_id to post the recipe connected to that use
     .post(jsonParser, (req, res, next) => {
-        const { recipe_name, recipe_image_link, serving_size, total_calories, cook_time, cooking_instruction_link, user_id } = req.body;
-        let id = req.body.id;
-        
+        //  Grabs important data from the body
+        const { loginToken, recipe_name, recipe_image_link, serving_size, total_calories, cook_time, cooking_instruction_link } = req.body;
+        let  id = req.body.id;
+        let user_id = '';
+
+        //  check if an id is present (for testing purposes)
         if(id === undefined) {
             id = uuidv4();
         }
 
-        const newRecipeInfo = {id, recipe_name, recipe_image_link, serving_size, total_calories, cook_time, cooking_instruction_link, user_id };
-
+        //  Check to see if values are empty and if they are it wont do the api call
+        const newRecipeInfo = {id, recipe_name, recipe_image_link, serving_size, total_calories, cook_time, cooking_instruction_link};
         for(const [key, value] of Object.entries(newRecipeInfo)) {
             if(value === undefined || value === '')
                 return res.status(400).json({
@@ -39,33 +44,49 @@ recipeRouter
                 })
         }
 
-        WTE_RecipeServices.insertRecipe(
+        //  Grabs the user id using the login token
+        WTE_RecipeServices.getUserIdByLoginToken(
             req.app.get('db'),
-            newRecipeInfo
+            loginToken
         )
         
-        .then(recipe => {
-            res
-                .status(201)
-                .location(path.posix.join(req.originalUrl, `/${recipe.id}`))
-                .json(serializeRecipe(recipe))
+        //  uses the saved id for the api call to add a recipe
+        .then(received_User_Id => {
+            user_id = received_User_Id;
+
+            newRecipeInfo.user_id = user_id[0].login_table_user_id;
+            
+            //  makes a call to add the recipe
+            WTE_RecipeServices.insertRecipe(
+                req.app.get('db'),
+                newRecipeInfo
+            )
+            
+            .then(recipe => {
+                res
+                    .status(201)
+                    .location(path.posix.join(req.originalUrl, `/${recipe.id}`))
+                    .json(serializeRecipe(recipe))
+            })
         })
 
         .catch(next)
     })
 
 recipeRouter
-    .route('/:user_id')
+    .route('/getRecipe/:user_login_token')
 
+    //  in one service, it grabs the user_id by using the login token, then 
+    //grabs the recipes with that info
     .get((req, res, next) => {
 
         WTE_RecipeServices.getRecipeByUserId(
             req.app.get('db'),
-            req.params.user_id
+            req.params.user_login_token
         )
 
-        .then(user => {
-            res.json(user)
+        .then(recipe => {
+            res.json(recipe)
         })
 
         .catch(next)
