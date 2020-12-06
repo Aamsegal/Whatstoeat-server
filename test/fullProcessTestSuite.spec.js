@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const { json } = require('express');
 const knex = require('knex');
 const supertest = require('supertest');
 const { v4: uuidv4 } = require('uuid');
@@ -104,6 +105,14 @@ describe('Full process of creating account, adding recipes and their extra info,
             return supertest(app)
                 .get(`/api/userEndpoint/${testUser.username}/${testUser.user_password}`)
                 .expect(200)
+                .then(res => {
+                    return JSON.parse(res.text);
+                })
+                .then(data => {
+                    console.log('___________________________')
+                    console.log(data[0].id)
+                    console.log('___________________________')
+                })
         })
 
     })

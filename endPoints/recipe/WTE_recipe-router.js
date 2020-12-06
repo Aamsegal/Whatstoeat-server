@@ -19,6 +19,10 @@ const serializeRecipe = recipeInfo => ({
     user_id: xss(recipeInfo.user_id)
 })
 
+const serializedDeleted = deletedInfo => ({
+    
+})
+
 recipeRouter
     .route('/')
     
@@ -93,7 +97,7 @@ recipeRouter
     })
 
 recipeRouter
-    .route('/:recipe_id')
+    .route('/deleteRecipe/:recipe_id')
 
     .delete((req, res, next) => {
 
@@ -106,7 +110,7 @@ recipeRouter
             res
                 .status(204)
                 .json({message: `${deleted_recipe.recipe_name} was deleted`})
-                .end()
+                //.end()
         })
 
         .catch(next)

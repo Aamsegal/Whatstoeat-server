@@ -10,7 +10,7 @@ const jsonParser = express.json();
 
 const serializedAllergy = ingredientInfo => ({
     id: xss(ingredientInfo.id),
-    allergy_info: xss(ingredientInfo.ingredient),
+    allergy_info: xss(ingredientInfo.allergy_info),
     recipe_id: xss(ingredientInfo.recipe_id)
 })
 
@@ -47,7 +47,7 @@ allergyRouter
             res
                 .status(201)
                 .location(path.posix.join(req.originalUrl, `/${allergy.id}`))
-                .json(serializedAllergy(allergy))
+                .json({allergy_info: allergy.allergy_info})
         })
 
         .catch(next)

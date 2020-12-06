@@ -16,15 +16,15 @@ const WTE_UserServices = {
         return knex
             .insert(loginTableInfo)
             .into('whats_to_eat_login_table')
-            .returning('*')
+            .returning('id')
             .then(loginId => {
-                return loginId.id
+                return loginId
             })
     },
 
     //  Grabs user if a username and password match
     getByUserAndPass(knex, username, user_password) {
-        return knex.from('whats_to_eat_user_table').select('id').where('username', username).where('user_password', user_password)
+        return knex.from('whats_to_eat_user_table').select('id','account_name').where('username', username).where('user_password', user_password)
     },
 
     //  grabs login token after confirming login

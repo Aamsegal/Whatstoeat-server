@@ -51,13 +51,15 @@ userRouter
                 req.app.get('db'),
                 loginTableInfo
             )
-
-            .catch(next)
             
-            res
-                .status(201)
-                .location(path.posix.join(req.originalUrl, `/${user.id}`))
-                .json('')
+            .then(loginToken => {
+
+                res
+                    .status(201)
+                    .location(path.posix.join(req.originalUrl, `/${user.id}`))
+                    .json(loginToken)
+            })
+            
         })
 
         .catch(next)
@@ -70,6 +72,8 @@ userRouter
     //return the login token for that
     .get((req, res, next) => {
 
+        let account_name = '';
+
         WTE_UserServices.getByUserAndPass(
             req.app.get('db'),
             req.params.username,
@@ -77,9 +81,9 @@ userRouter
         )
    
         .then(user => {
-            console.log(user[0].id)
 
             let user_id = user[0].id;
+            account_name = user[0].account_name;
 
             const loginTableInfo = user_id
 
@@ -89,16 +93,11 @@ userRouter
             )
 
             .then(loginKey => {
-                console.log(loginKey)
+                loginKey.push({account_name: account_name});
                 res
                     .status(200)
                     .json(loginKey)
             })
-            /*
-            res
-                .status(200)
-                .json(user)
-            */
         })
 
         .catch(next)

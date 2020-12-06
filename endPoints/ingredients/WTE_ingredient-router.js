@@ -46,7 +46,7 @@ ingredientRouter
             res
                 .status(201)
                 .location(path.posix.join(req.originalUrl, `/${ingredient.id}`))
-                .json(serializedIngredient(ingredient))
+                .json({ingredient: ingredient.ingredient})
         })
 
         .catch(next)
