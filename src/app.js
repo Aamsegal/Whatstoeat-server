@@ -19,7 +19,7 @@ app.use(helmet())
 app.use(cors())
 
 app.get('/', (req, res) => {
-    res.send('The server works!')
+    res.send('Whats to eat server is running')
 })
 
 app.use('/api/userEndpoint', WTE_userRouter);
