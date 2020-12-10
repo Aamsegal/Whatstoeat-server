@@ -11,7 +11,7 @@ describe('Full process of creating account, adding recipes and their extra info,
     before('make knex instance', () => {
         let db = knex({
             client: 'pg',
-            connection: process.env.DATABASE_URL,
+            connection: process.env.TEST_DATABASE_URL,
         })
 
         app.set('db', db)
