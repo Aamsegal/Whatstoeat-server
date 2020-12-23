@@ -15,7 +15,13 @@ const WTE_RecipeServices = {
     //they match it will return the user_id that is then used to grab the recipes
     getRecipeByUserId(knex, userLoginToken) {
         return knex
-            .select('*')
+            .select('id')
+            .select('recipe_name')
+            .select('recipe_image_link')
+            .select('serving_size')
+            .select('total_calories')
+            .select('cook_time')
+            .select('cooking_instruction_link')
             .from('whats_to_eat_recipe_table')
             .where(
                 "user_id",
