@@ -2,7 +2,7 @@
 
 `Name:` What's to eat server and database
 
-`Application Link:` [What's to Eat!](https://whats-to-eat.vercel.app/application)
+`Application Link:` [What's to Eat!](https://whats-to-eat.vercel.app/)
 
 `Description:` This server stores the info of the users as well as their saved recipes. Someone can create an account and search through recipes, save, delete and look at any recipes that find interesting.
 

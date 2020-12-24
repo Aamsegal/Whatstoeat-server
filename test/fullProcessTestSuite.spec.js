@@ -112,6 +112,7 @@ describe('Full process of creating account, adding recipes and their extra info,
         cooking_instruction_link: "BubbiesApplePieRecipeLink",
     }
 
+    //  Testing USer endpoint____________________________________________
     context('1.0 Testing /api/userEndpoint .Post and .Get', () => { 
 
         it('1.1 (POST) /api/userEndpoint responds with 201 and the user was created', () => {
@@ -155,6 +156,7 @@ describe('Full process of creating account, adding recipes and their extra info,
 
     })
     
+    //  Testing Recipe endpoint____________________________________________
     context('2.0 Testing /api/recipeEndpoint .Post and .Get', () => {
 
         it('2.1. (POST) /api/recipeEndpoint/ with 201 and created the recipe', () => {
@@ -196,31 +198,84 @@ describe('Full process of creating account, adding recipes and their extra info,
         })
 
     })
+
+    //  Testing Ingredient endpoint____________________________________________
+    context('3.0 Testing /api/ingredientEndpoint. This endpoint has a POST and GET', ()=> {
+        it('3.1 (POST) /api/ingredientEndpoint.', () => {
+            return supertest(app)
+                .post('/api/ingredientEndpoint')
+                .send({ingredient: "Flour", recipe_id: generatedRecipeId1})
+                .expect(201, {ingredient: 'Flour'})
+        })
+
+        it('3.1.1 (POST) Adding extra ingredient for testing purposes', () => {
+            return supertest(app)
+                .post('/api/ingredientEndpoint')
+                .send({ingredient: "Sugar", recipe_id: generatedRecipeId1})
+                .expect(201, {ingredient: 'Sugar'})
+        })
+
+        it('3.2 (GET) /api/ingredientEndpoint/recipe/:recipe_id. Grabs the ingredients from the recipe', () => {
+            return supertest(app)
+                .get(`/api/ingredientEndpoint/recipe/${generatedRecipeId1}`)
+                .expect(200, [
+                    {"ingredient": "Flour"},
+                    {"ingredient": "Sugar"}
+                ])
+        })
+    })
+
+    //  Testing Allergy endpoint____________________________________________
+    context('4.0 Testing /api/allergyEndpoint. This endpoint has a POST and GET', ()=> {
+        it('4.1 (POST) /api/allergyEndpoint.', () => {
+            return supertest(app)
+                .post('/api/allergyEndpoint')
+                .send({allergy_info: "Gluten", recipe_id: generatedRecipeId1})
+                .expect(201, {allergy_info: 'Gluten'})
+        })
+
+        it('4.1.1 (POST) Adding extra ingredient for testing purposes', () => {
+            return supertest(app)
+                .post('/api/allergyEndpoint')
+                .send({allergy_info: "Milk", recipe_id: generatedRecipeId1})
+                .expect(201, {allergy_info: 'Milk'})
+        })
+
+        it('4.2 (GET) /api/ingredientEndpoint/recipe/:recipe_id. Grabs the ingredients from the recipe', () => {
+            return supertest(app)
+                .get(`/api/allergyEndpoint/recipe/${generatedRecipeId1}`)
+                .expect(200, [
+                    {"allergy_info": "Gluten"},
+                    {"allergy_info": "Milk"}
+                ])
+        })
+    })
     
-    context('3.0 Testing /api/recipeEndpoint .Delete, then trying to make a get request expecting an error', () => {
-        it('3.1 (DELETE) /api/recipeEndpoint/deleteRecipe/:recipe_id', () => {
+    //  Testing Recipe DELETE endpoint____________________________________________
+    context('5.0 Testing /api/recipeEndpoint .Delete, then trying to make a get request expecting an error', () => {
+        it('5.1 (DELETE) /api/recipeEndpoint/deleteRecipe/:recipe_id', () => {
             return supertest(app)
                 .delete(`/api/recipeEndpoint/deleteRecipe/${testRecipe1.id}`)
                 .expect(204)
         }) 
 
-        it('3.1.1 (GET) With this get request from User1, we should only get back 1 recipe', () => {
+        it('5.1.1 (GET) With this get request from User1, we should only get back 1 recipe', () => {
             return supertest(app)
                 .get(`/api/recipeEndpoint/getRecipe/${testRecipe1.loginToken}`)
                 .expect(200, [testRecipe2NoToken])
         })
     })
     
+    //  Cleaning the database for future tests____________________________________________
+    context('6.0 Testing /api/userEndpoint .Delete', () => {
 
-    context('4.0 Testing /api/userEndpoint .Delete', () => {
-
-        it('4.1 (DELETE) /api/userEndpoint/:id/:username/:user_password responds with 204 and is deleted', () => {
+        it('6.1 (DELETE) /api/userEndpoint/:id/:username/:user_password responds with 204 and is deleted', () => {
             return supertest(app)
                 .delete(`/api/userEndpoint/${testUser.id}/${testUser.username}/${testUser.user_password}`)
                 .expect(204)
         })
 
-        it('4.2 (DELETE) deleting second account made for testing purposed', () => {
+        it('6.2 (DELETE) deleting second account made for testing purposed', () => {
             return supertest(app)
                 .delete(`/api/userEndpoint/${testUser2.id}/${testUser2.username}/${testUser2.user_password}`)
                 .expect(204)
